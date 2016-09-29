@@ -1,0 +1,41 @@
+php artisan route:cache 缓存路由
+php artisan route:clear 清除路由缓存
+php artisan route:list  查看路由
+
+Route::get('foo/bar', function () { return 'Hello World'; });
+Route::post('foo/bar', function () { return 'Hello World'; });
+Route::put('foo/bar', function () { return 'Hello World'; });
+Route::delete('foo/bar', function () { return 'Hello World'; });
+Route::match(['get', 'post'], '/', function () { return 'Hello World'; });
+Route::any('foo', function () { return 'Hello World'; });
+
+Route::get('user/{id}', function ($id) {return 'User '.$id; });
+Route::get('posts/{post}/comments/{comment}', function ($postId, $commentId) {});
+Route::get('user/{name?}', function ($name = null) { return $name; });
+Route::get('user/profile', [ 'as' => 'profile', 'uses' => 'UserController@showProfile']);
+Route::get('/', ArticleController@index);
+
+Route::resource('article', ArticleController@index);//自动注册路由
+
+
+
+Route::group(['as' => 'admin::','middleware' => ['web','auth'],'namespace' => 'Admin','domain' => '{account}.myapp.com','prefix' => 'admin'], function () {
+    Route::get('dashboard', ['as' => 'dashboard', function () {
+        // Route named "admin::dashboard"
+    }]);
+});
+as 为别名 $url = route('admin::dashboard');
+middleware 为中间件
+namespace 为命名空间里面的控制器都在改命名空间下，默认全局的命名空间为App\Http\Controller
+domain 为子域名，域名匹配这个的时候才会使用里面的路由
+prefix 为前缀 里面的路由都会加上该前缀 'admin/dashboard'
+
+一旦你为给定路由分配了名字，通过 route 函数生成 URLs 时就可以使用路由名字：
+$url = route('profile');
+$redirect = redirect()->route('profile');
+
+Route::get('user/{id}/profile', ['as' => 'profile', function($id) { // }]);
+$url = route('profile', ['id' => 1]);
+
+用url生成路由对应的URLs
+$url = url('foo');

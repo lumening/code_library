@@ -1,0 +1,3 @@
+$value = config('app.timezone');  读取配置
+config(['app.timezone' => 'America/Chicago']); 设置配置
+

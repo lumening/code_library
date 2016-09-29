@@ -1,0 +1,27 @@
+一、安装lNMP环境
+php版本5.6.9
+php需要支持mcrypt和openssl 扩展
+在 /usr/local/php/etc/php.ini中 查找 disable_functions ，看到proc_open和proc_get_status确实是被禁用了，修改这一行，把这两个函数去掉。
+
+二、安装composer
+cd ~
+curl -sS https://getcomposer.org/installer | php
+cp /root/composer.phar /usr/local/composer
+
+三、生成laravel项目
+
+通过composer生成laravel项目(可以翻墙)
+composer create-project laravel/laravel --prefer-dist
+
+直接下载安装包
+wget http://down.golaravel.com/laravel/laravel-v5.2.0.zip
+unzip laravel-v5.2.0.zip
+
+四、设置环境
+chmod 777 storage/ -R 
+将域名绑定到public目录
+
+nginx增加下面的语句
+location / {
+	try_files $uri $uri/ /index.php?$query_string;
+}

@@ -1,0 +1,63 @@
+基本响应
+Route::get('/', function () {
+		return 'Hello World';
+});
+
+添加响应头
+return response($content)
+	->header('Content-Type', $type)
+	->header('X-Header-One', 'Header Value')
+	->header('X-Header-Two', 'Header Value');
+
+添加 Cookies
+return response($content)->header('Content-Type', $type)
+	->withCookie('name', 'value');
+
+视图 响应
+return response()->view('hello', $data)->header('Content-Type',$type);
+//当然，如果你不需要传递一个自定义的 HTTP 状态码或者自定义头，只需要简单使用全局的帮助函数 view 即可。
+
+JSON 响应
+return response()->json(['name' => 'Abigail', 'state' => 'CA']);
+return response()->json(['name' => 'Abigail', 'state' => 'CA'])->setCallback($request->input('callback'));
+
+文件下载
+return response()->download($pathToFile);return response()->download($pathToFile, $name, $headers);
+
+重定向
+return redirect('home/dashboard');
+//有时候你想要将用户重定向到前一个位置，比如，表单提交后，验证不通过，你就可以使用back 帮助函数返回前一个 URL
+return back()->withInput(); 
+
+重定向到命名路由
+return redirect()->route('login');
+// For a route with the following URI: profile/{id}
+return redirect()->route('profile', [1]);
+
+重定向到控制器动作
+return redirect()->action('HomeController@index');
+return redirect()->action('UserController@profile', [1]);
+
+带一次性 Session 
+return redirect('dashboard')->with('status', 'Profile updated!');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

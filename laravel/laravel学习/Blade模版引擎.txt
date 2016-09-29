@@ -1,0 +1,61 @@
+Blade模版引擎
+
+<!-- 存放在 resources/views/layouts/master.blade.php -->
+<html>
+	<head>
+			<title>App Name - @yield('title')</title>
+	</head>
+	<body>
+		<div class="container">
+		@yield('content')
+		</div>
+	</body>
+</html>
+
+<!-- 存放在 resources/views/layouts/child.blade.php -->
+@extends('layouts.master')
+@section('content')
+<p>This is my body content.</p>
+@endsection
+
+
+{{ $name }}   {{ }} 语句已经通过PHP的 htmlentities 函数处理以避免XSS攻击
+@{{ name }}    @符号来告诉 Blade 渲染引擎该表达式应该保持原生格式不作改动
+{{ $name or 'Default' }} 如果 $name 变量存在，其值将会显示，否则将会显示“Default”
+{!! $name !!} 不经过htmlentities 函数处理
+
+@if (count($records) === 1)
+	I have one record!
+@elseif (count($records) > 1)
+	I have multiple records!
+@else
+	I don't have any records!
+@endif
+
+@for ($i = 0; $i < 10; $i++)
+The current value is {{ $i }}
+@endfor
+
+@foreach ($users as $user)
+<p>This is user {{ $user->id }}</p>
+@endforeach
+
+@while (true)
+<p>I'm looping forever.</p>
+@endwhile
+
+@include('shared.errors')  包含子视图
+{{-- This comment will not be present in the rendered HTML --}}  注释
+
+服务注入
+@inject('metrics', 'App\Services\MetricsService')
+<div>
+Monthly Revenue: {{ $metrics->monthlyRevenue() }}.
+</div>
+
+{!! csrf_field() !!}
+<input type="hidden" name="_method" value="PUT">
+<input type="hidden" name="_token" value="{{ csrf_token() }}">
+
+
+

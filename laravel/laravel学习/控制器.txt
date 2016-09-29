@@ -1,0 +1,118 @@
+php artisan make:controller UserController --plain
+
+基本的控制器
+<?php
+namespace App\Http\Controllers;
+use App\User;
+use App\Http\Controllers\Controller;
+class UserController extends Controller{
+	public function showProfile($id){
+		return view('user.profile', ['user' => User::findOrFail($id)]);
+	}
+}
+
+Route::get('user/{id}', 'UserController@showProfile');
+
+命名控制路由
+Route::get('foo', ['uses' => 'FooController@method', 'as' => 'name']);
+$url = action('FooController@method');  使用帮助函数 action 很方便的生成 URLs到 action
+$url = route('name');  使用帮助函数 route 来为已命名的控制器路由生成 URL
+
+
+控制器中间件
+中间件可以分配给路由
+Route::get('profile', [
+'middleware' => 'auth',
+'uses' => 'UserController@showProfile'
+]);
+
+也可以将中间件放在控制器的构造函数内
+class UserController extends Controller{
+	public function __construct(){
+		$this->middleware('auth');
+		$this->middleware('log', ['only' => ['fooAction', 'barAction']]);
+		$this->middleware('subscribed', ['except' => ['fooAction', 'barAction']]);
+	}
+}
+
+
+RESTful资源控制器
+Route::resource('photo', 'PhotoController');
+
+方法  路径  动作  路由名称
+GET  /photo index  photo.index
+GET  /photo/create create  photo.create
+POST  /photo store  photo.store
+GET  /photo/{photo} show  photo.show
+GET  /photo/{photo}/edit edit  photo.edit
+PUT/PATCH  /photo/{photo} update  photo.update
+DELETE  /photo/{photo} destroy  photo.destroy
+
+声明资源路由时可以指定该路由处理的动作子集：
+Route::resource('photo', 'PhotoController', ['only' => ['index', 'show']]);
+Route::resource('photo', 'PhotoController', ['except' => ['create', 'store', 'update', 'destroy']]);
+
+命名资源路由
+Route::resource('photo', 'PhotoController',['names' => ['create' => 'photo.build']]);
+
+嵌套资源
+Route::resource('photos.comments', 'PhotoCommentController');
+该路由将注册一个嵌套的资源，使用 URL 访问方式如下：
+photos/{photos}/comments/{comments} .
+public function show($photoId, $commentId){//}
+
+
+隐式控制器
+Route::controller('users', 'UserController');
+
+//响应 GET /users 请求
+public function getIndex(){}
+
+//响应 GET /users/show/1 请求
+public function getShow($id){}
+
+//响应 GET /users/admin-profile 请求
+public function getAdminProfile(){}
+
+//响应 POST /users/profile 请求
+public function postProfile(){}
+
+构造函数注入
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Routing\Controller;
+use App\Repositories\UserRepository;
+class UserController extends Controller{
+	protected $users;
+	public function __construct(UserRepository $users){
+		$this->users = $users;
+	}
+}
+
+方法注入
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+class UserController extends Controller{
+	public function store(Request $request){
+		$name = $request->input('name');
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

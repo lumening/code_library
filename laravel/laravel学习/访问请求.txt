@@ -1,0 +1,50 @@
+通过依赖注入获取当前 HTTP 请求实例，应该在控制器的构造函数或方法中对
+Illuminate\Http\Request 类进行类型提示，当前请求实例会被服务容器自动注入
+
+<?php
+namespace App\Http\Controllers;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+class UserController extends Controller{
+	public function store(Request $request){
+		$name=$request->input('name');
+	}
+	public function update(Request $request,$id){
+		//
+	}
+}
+
+基本请求信息
+$uri=$request->path();   path方法将会返回请求的URI
+if($request->is('admin/*')){}     验证进入的请求是否与给定模式匹配
+$url=$request->url();    获取完整的 URL
+$method=$request->method();   返回请求的 HTTP 请求方式
+if($request->isMethod('post')){ // }   isMethod 方法来验证 HTTP 请求方式是否匹配给定字符串
+
+获取输入
+$name = $request->input('name');
+$name = $request->input('name', 'Sally');  传递一个默认值作为第二个参数给 input 方法，如果请求输入值在当前请求未出现 时该值将会被返回
+$input = $request->input('products.0.name');  处理表单数组输入时，可以使用”.”来访问数组
+if ($request->has('name')) {}
+$input = $request->all();  所有输入数据
+
+取出老数据
+$username = $request->old('username');
+{{ old('username') }}
+
+从请求中取出 Cookies
+$value = $request->cookie('name');
+
+ 文件上传
+$file = $request->file('photo');  访问上传文件
+if ($request->hasFile('photo')){}  判断文件在请求中是否存在
+if ($request->file('photo')->isValid()){} //判断文件在上传过程中是否出错
+$request->file('photo')->move($destinationPath); 保存上传的文件
+$request->file('photo')->move($destinationPath, $fileName); 
+
+
+
+
+
+
+

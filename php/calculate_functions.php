@@ -58,3 +58,4 @@ function getDistanceBetweenPointsNew ($latitude1, $longitude1, $latitude2, $long
     return compact('miles', 'feet', 'yards', 'kilometers', 'meters');
 }
 
+

@@ -1,0 +1,50 @@
+public function store(Request $request){
+    $this->validate($request, [
+        'img_url' => 'required|url',
+        'sourceid'=> 'required|numeric|integer',
+        'link_path' => 'required|url',
+    ]);
+
+
+    $validator = Validator::make($request->all(), [
+        'name' => 'required|max:255',
+        'email' => 'sometimes|required|email', //只想 当字段有值时，才进行验证 sometimes
+        'column' => 'url', //字段值需符合 URL 的格式。
+        //unique:table,column,except,idColumn
+        'email' => 'unique:users',
+        'email' => 'unique:users,email_address'
+        'email' => 'unique:users,email_address,10'
+ 		'photo' => 'mimes:jpeg,bmp,png'
+
+        same:field  //字段值需与指定字段 field 等值。
+        size:value  //字段值的尺寸需符合给定 value 值。对于字串来说，value 为需符合的字串长度。对于数字来说，value 为需符合的整数值。对于文件来说，value 为需符合的文件大小（单位 kb)。
+        string      //必须是字符串类型。
+		numeric 字段值需为数字。
+		integer 字段值需为一个整数值
+		required  字段值为必填。
+		min:value  字段值需大于等于 value。字串、数字和文件则是判断 size 大小。
+		max:value   字段值需小于等于 value。字串、数字和文件则是判断 size 大小。
+		not_in:foo,bar,...  字段值不得为给定清单中其一。
+		in:foo,bar,...      字段值需符合事先给予的清单的其中一个值
+		ip  字段值需符合 IP 位址格式。
+		active_url  字段值通过 PHP 函数 checkdnsrr 来验证是否为一个有效的网址。
+		alpha 字段仅全数为字母字串时通过验证。
+		alpha_dash 字段值仅允许字母、数字、破折号（-）以及底线（_）
+		alpha_num 字段值仅允许字母、数字
+		array 字段值仅允许为数组
+		between:min,max 字段值需介于指定的 min 和 max 值之间。字串、数值或是文件都是用同样的方式来进行验证。
+		date  字段值通过 PHP strtotime 函数验证是否为一个合法的日期。
+		date_format:format 字段值通过 PHP date_parse_from_format 函数验证符合 format 制定格式的日期是否为合法日期。
+		digits:value 字段值需为数字且长度需为 value。 
+		digits_between:min,max 字段值需为数字，且长度需介于 min 与 max 之间。 
+		boolean 字段必须可以转换成布尔值，可接受的值为 true, false, 1, 0, "1", "0"。
+		email 字段值需符合 email 格式。
+
+    ]);
+
+    if ($validator->fails()) {
+        return redirect('/')
+            ->withInput()
+            ->withErrors($validator);
+    }
+}

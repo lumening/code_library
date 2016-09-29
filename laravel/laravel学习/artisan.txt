@@ -1,0 +1,28 @@
+php artisan app:name Horsefly 重命名应用的命名空间
+
+php artisan down 打开维护模式，503状态吗的HttpException会被抛出（php artisan down 打开维护模式）
+php artisan up   关闭维护模式
+
+php artisan make:middleware OldMiddleware 生成中间件
+
+php artisan route:cache 缓存路由
+php artisan route:clear 清除路由缓存
+php artisan route:list  查看路由
+
+php artisan make:provider RiakServiceProvider 生成一个新的服务提供者
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

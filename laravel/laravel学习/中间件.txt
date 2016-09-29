@@ -1,0 +1,69 @@
+php artisan make:middleware OldMiddleware
+
+
+<?php
+namespace App\Http\Middleware;
+use Closure;
+class OldMiddleware{
+	public function handle($request, Closure $next){
+		if ($request->input('age') <= 200) {
+			return redirect('home');
+		}
+		return $next($request);
+	}
+}
+
+中间件之前
+<?php
+namespace App\Http\Middleware;
+use Closure;
+class BeforeMiddleware{
+	public function handle($request, Closure $next){
+		// 执行动作
+		return $next($request);
+	}
+}
+
+中间件之后
+<?php
+namespace App\Http\Middleware;
+use Closure;
+class AfterMiddleware{
+	public function handle($request, Closure $next){
+		$response = $next($request);
+		// 执行动作
+		return $response;
+	}
+}
+
+
+注册中间件
+
+如果你想要中间件在每一个 HTTP 请求期间被执行，只需要将相应的中间件类放到
+app/Http/Kernel.php 的数组属性 $middleware 中即可
+
+如果你想要分配中间件到指定路由，首先应该在 app/Http/Kernel.php 文件中分配给该中间
+件一个简写的 key，默认情况下，该类的 $routeMiddleware 属性包含了 Laravel 内置的入口
+中间件，添加你自己的中间件只需要将其追加到后面并为其分配一个 key
+
+// 在 App\Http\Kernel 里中
+protected $routeMiddleware = [
+	'auth' => \App\Http\Middleware\Authenticate::class,
+	'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+	'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+];
+
+使用中间件
+Route::get('admin/profile', ['middleware' => 'auth', function() { //  }]);
+
+
+中间参数
+public function handle($request, Closure $next, $role){
+	if (! $request->user()->hasRole($role)) {
+	// Redirect...
+	}
+	return $next($request);
+}
+Route::put('post/{id}', ['middleware' => 'role:editor', function ($id) { // }]);
+
+

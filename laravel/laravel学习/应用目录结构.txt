@@ -1,0 +1,22 @@
+应用目录结构
+
+app 目录包含了应用的核心代码；
+bootstrap 目录包含了少许文件用于框架的启动和自动载入配置，还有一个 cache 文件夹用于包含框架生成的启动文件以提高性能；
+config 目录包含了应用所有的配置文件；
+database 目录包含了数据迁移及填充文件，如果你喜欢的话还可以将其作为 SQLite 数据库存放目录；
+public 目录包含了前端控制器和资源文件（图片、js、css 等）；
+resources 目录包含了视图文件及原生资源文件（LESS、SASS、CoffeeScript），以及本地化文件；
+storage 目录包含了编译过的 Blade 模板、基于文件的 session、文件缓存，以及其它由框架生成的文件，该文件夹被隔离成 app 、 framework 和 logs 目录， app 目录用于存放应用要使用的文件， framework 目录用于存放框架生成的文件和缓存，最后， logs 目录包含应用的日志文件；
+tests 目录包含自动化测试，其中已经提供了一个开箱即用的 PHPUnit 示例；
+vendor 目录包含 Composer 依赖；
+
+App目录
+
+
+
+
+
+
+
+
+

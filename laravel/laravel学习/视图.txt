@@ -1,0 +1,29 @@
+return view('greeting', ['name' => 'James']);
+return view('greeting')->with('name', 'Victoria');
+return view('admin.profile', $data);
+if (view()->exists('emails.customer')) { // } //判断视图是否存在
+
+
+
+
+
+在视图间共享数据
+<?php
+namespace App\Providers;
+class AppServiceProvider extends ServiceProvider{
+	public function boot(){
+		view()->share('key', 'value');
+	}
+	public function register(){}
+}
+
+
+
+
+
+
+
+
+
+
+

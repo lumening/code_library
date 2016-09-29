@@ -1,0 +1,198 @@
+
+
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class Flight extends Model{
+    protected $table = 'my_flights'; //关联到模型的数据表
+    //Eloquent默认每张表的主键名为id，你可以在模型类中定义一个$primaryKey属性来覆盖该约定。
+	protected $primaryKey = 'primaryKey';
+	//Eloquent期望created_at和updated_at已经存在于数据表中，如果你不想要这些Laravel自动管理的列，在模型类中设置$timestamps属性为false
+	public $timestamps = false;  //表明模型是否应该被打上时间戳
+	protected $dateFormat = 'U'; //模型日期列的存储格式
+	protected $fillable = ['name']; //可以被赋值属性的“白名单”，
+	protected $guarded = ['age'];  //包含你不想被赋值的属性数组
+	protected $dates = ['deleted_at']; //软删除功能，定义软删除字段名
+
+}
+
+新建表的时候使用软删除
+Schema::table('flights', function ($table) {
+    $table->softDeletes();
+});
+
+<?php
+namespace App\Http\Controllers;
+use App\Flight;
+use App\Http\Controllers\Controller;
+class FlightController extends Controller{
+    public function index(){
+        $flights = Flight::all();
+
+        //添加额外约束
+        $flights = App\Flight::where('active', 1)
+               ->orderBy('name', 'desc')
+               ->take(10)
+               ->get();
+
+        //组块结果集
+        Flight::chunk(200, function ($flights) {
+		    foreach ($flights as $flight) {
+		        //
+		    }
+		});
+
+		// 通过主键获取模型...
+		$flight = App\Flight::find(1);
+		// 获取匹配查询条件的第一个模型...
+		$flight = App\Flight::where('active', 1)->first();
+
+		$model = App\Flight::findOrFail(1);
+		$model = App\Flight::where('legs', '>', 100)->firstOrFail();
+
+		$count = App\Flight::where('active', 1)->count();
+		$max = App\Flight::where('active', 1)->max('price');
+
+		//基本插入
+		//created_at和updated_at时间戳在save方法被调用时会自动被设置，所以没必要手动设置它们
+		$flight = new Flight;
+        $flight->name = $request->name;
+        $flight->save();
+
+        //基本更新
+        $flight = App\Flight::find(1);
+		$flight->name = 'New Flight Name';
+		$flight->save();
+
+		App\Flight::where('active', 1)
+		          ->where('destination', 'San Diego')
+		          ->update(['delayed' => 1]);
+
+		 //批量赋值
+		 $flight = App\Flight::create(['name' => 'Flight 10']);
+
+		// 通过属性获取航班, 如果不存在则创建...
+		$flight = App\Flight::firstOrCreate(['name' => 'Flight 10']);
+		// 通过属性获取航班, 如果不存在初始化一个新的实例...
+		$flight = App\Flight::firstOrNew(['name' => 'Flight 10']);
+
+		//删除模型
+		$flight = App\Flight::find(1);
+		$flight->delete();
+
+		//通过主键删除模型
+		App\Flight::destroy(1);
+		App\Flight::destroy([1, 2, 3]);
+		App\Flight::destroy(1, 2, 3);
+
+		//通过查询删除模型
+		$deletedRows = App\Flight::where('active', 0)->delete();
+        
+		//包含软删除模型
+		$flights = App\Flight::withTrashed()
+                ->where('account_id', 1)
+                ->get();
+        $flight->history()->withTrashed()->get();       
+
+        //只获取软删除模型
+        $flights = App\Flight::onlyTrashed()
+                ->where('airline_id', 1)
+                ->get();
+
+        //恢复软删除模型
+        $flight->restore();
+        App\Flight::withTrashed()->where('airline_id', 1)->restore();
+
+        //永久删除模型
+        // 强制删除单个模型实例...
+		$flight->forceDelete();
+		// 强制删除所有关联模型...
+		$flight->history()->forceDelete();
+
+		//分页
+		APP\Model::whereRaw('1=1')->paginate($perpage);
+
+        foreach ($flights as $flight) {
+		    echo $flight->name;
+		}
+        return view('flight.index', ['flights' => $flights]);
+    }
+}
+
+
+关联关系
+
+一对一关联是一个非常简单的关联关系，例如，一个User模型有一个与之对应的Phone模型。要定义这种模型，我们需要将phone方法置于User模型中，phone方法应该返回Eloquent模型基类上hasOne方法的结果
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class User extends Model{
+    public function phone(){
+        return $this->hasOne('App\Phone');
+        //return $this->hasOne('App\Phone', 'foreign_key', 'local_key');
+    }
+}
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class Phone extends Model{
+    public function user(){
+        return $this->belongsTo('App\User');
+        //return $this->belongsTo('App\User', 'foreign_key', 'other_key');
+    }
+}
+
+$phone = User::find(1)->phone;
+
+一对多”是用于定义单个模型拥有多个其它模型的关联关系。例如，一篇博客文章拥有无数评论，和其他关联关系一样，一对多关联通过在Eloquent模型中定义方法来定义
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class Post extends Model{
+    public function comments(){
+        return $this->hasMany('App\Comment');
+        //return $this->hasMany('App\Comment', 'foreign_key');
+		//return $this->hasMany('App\Comment', 'foreign_key', 'local_key');
+    }
+}
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class Comment extends Model{
+    public function post(){
+        return $this->belongsTo('App\Post');
+    }
+}
+
+$comments = App\Post::find(1)->comments;
+foreach ($comments as $comment) {}
+$comment = App\Comment::find(1);
+echo $comment->post->title;
+
+多对多关系比hasOne和hasMany关联关系要稍微复杂一些。这种关联关系的一个例子就是一个用户有多个角色，同时一个角色被多个用户共用。例如，很多用户可能都有一个“Admin”角色。要定义这样的关联关系，需要三个数据表：users、roles和role_user，role_user表按照关联模型名的字母顺序命名，并且包含user_id和role_id两个列。
+
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class User extends Model{
+    public function roles(){
+        return $this->belongsToMany('App\Role');
+    }
+}
+$user = App\User::find(1);
+foreach ($user->roles as $role) {}
+$roles = App\User::find(1)->roles()->orderBy('name')->get();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
