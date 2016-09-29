@@ -84,3 +84,37 @@ function list_recursive_dir ($pathName, $filter = array())
     }
     return $result;
 }
+
+
+//$deep为是否深度遍历目录 默认遍历
+//支持中文目录 中文文件
+/**
+ * 遍历文件夹
+ * @param  string  $dir
+ * @param  boolean $deep 是否深度遍历目录 默认遍历
+ * @return string
+ */
+function listDir ($dir, $deep = true)
+{
+    global $arr;
+    if (is_dir($dir)) {
+        $fp = opendir($dir);
+        while (false !== $file = readdir($fp)) {
+            if ($deep && is_dir($dir . '/' . $file) && $file != '.' && $file != '..') {
+                $file1 = iconv('gb2312', 'utf-8', $file);
+                $arr[] = $file1; //保存目录名 可以取消注释
+                echo "<b><font color='green'>目录名：</font></b>", $file1, "<br><hr>";
+                listDir($dir . '/' . $file . '/');
+            } else {
+                if ($file != '.' && $file != '..') {
+                    $file = iconv('gb2312', 'UTF-8', $file);
+                    echo "<b><font color='red'>文件名：</font></b>", $file, "<br><hr>";
+                    $arr[] = $file;
+                }
+            }
+        }
+        closedir($fp);
+    } else {
+        echo $dir . '不是目录';
+    }
+}
