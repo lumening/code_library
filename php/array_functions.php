@@ -38,4 +38,27 @@ function arrayToObject ($arr)
 }
 
 
+/**
+ * 函数从数组返回指定的键值对
+ *
+ * @param array $array
+ * @param array $keys
+ * @return array
+ */
+function array_only ($array, $keys)
+{
+    return array_intersect_key($array, array_flip((array)$keys));
+}
 
+
+/**
+ * 函数从数组返回指定的键以外的键值对
+ *
+ * @param array $array
+ * @param array $keys
+ * @return array
+ */
+function array_except($array, $keys)
+{
+    return array_diff_key($array, array_flip((array)$keys));
+}
