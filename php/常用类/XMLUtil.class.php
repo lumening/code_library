@@ -1,7 +1,7 @@
 <?php
 /**
  * @date: 2016/10/14 21:26
- * @author: Tan <tanda@kankan.com>
+ * @author: Tan <tanda517886160@163.com>
  * @copyright © 2003-2016 Kankan.com
  */
 
