@@ -75,3 +75,14 @@ if (sign($data, 'QXqK0w3mmsr9YUAr') != $_GET['sign']) {
     exit(ajaxResponse(500));
 }
 
+/**
+ * 人性化的显示
+ * 
+ * @param $size
+ * @return string
+ */
+function convert ($size)
+{
+    $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
+    return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
+}

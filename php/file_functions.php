@@ -118,3 +118,28 @@ function listDir ($dir, $deep = true)
         echo $dir . '不是目录';
     }
 }
+
+
+/**
+ * 读取csv到数据
+ * 
+ * @param  string $csv_file
+ * @param  string $delimiter 分隔符 默认"\t"
+ * @return array
+ */
+function get_csv_data($csv_file, $delimiter = "\t") {
+	$row = 0;
+	$results = array();
+	if (($handle = fopen($csv_file, "r")) !== FALSE) {
+		while (($data = fgetcsv($handle, 1000, $delimiter)) !== FALSE) {
+	        $num = count($data);
+	        $row++;
+
+	        for ($c=0; $c < $num; $c++) {
+	            $results[$row][$c] = $data[$c];
+	        }
+    	}
+    	fclose($handle);
+	}
+	return $results;
+}

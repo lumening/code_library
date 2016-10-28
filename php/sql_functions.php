@@ -1,5 +1,4 @@
 <?php
-
 /**
  * 数据库语句
  *
@@ -11,7 +10,7 @@
  * @param string $limit
  * @return string
  */
-function arrayToSql($action='update', $table='', $data, $condition='', $field='*', $limit=''){
+function array_2_sql($action='update', $table='', $data, $condition='', $field='*', $limit=''){
     $tmp_data = array();
     if(is_array($data)){
         foreach ($data as $k => $v) {
@@ -41,13 +40,14 @@ function arrayToSql($action='update', $table='', $data, $condition='', $field='*
 
     $limit = $limit ? (' LIMIT '.$limit) : '';
 
-    if($action == 'select'){
-        return 'SELECT ' . (is_array($field) ? implode(',', $field) : $field) .' FROM ' . $table . $condition .' '.$limit;
-    }elseif($action == 'delete'){
-        return 'DELETE FROM ' . $table . $condition .' '.$limit;
-    }elseif($action == 'update'){
-        return 'UPDATE '. $table . ' SET '. implode(', ', $tmp_data). $condition .' '.$limit;
-    }else{
-        return $action . ' INTO ' . $table . ' SET '. implode(', ', $tmp_data) . $condition . ' '.$limit;
+    switch(strtolower($action)) {
+        case "select" :
+            return 'SELECT ' . (is_array($field) ? implode(',', $field) : $field) .' FROM ' . $table . $condition .' '.$limit;
+        case "update" :
+            return 'UPDATE '. $table . ' SET '. implode(', ', $tmp_data). $condition .' '.$limit;
+        case "delete" :
+            return 'DELETE FROM ' . $table . $condition .' '.$limit;
+        default :
+            return $action . ' INTO ' . $table . ' SET '. implode(', ', $tmp_data) . $condition . ' '.$limit;
     }
 }
